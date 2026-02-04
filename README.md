@@ -41,3 +41,10 @@ npx create-next-app .
 cd name
 npm run dev
 ```
+
+```js
+git add .
+git commit -m "Add all project files"
+git push
+
+```
