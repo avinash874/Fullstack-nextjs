@@ -48,3 +48,110 @@ git commit -m "Add all project files"
 git push
 
 ```
+# Database Connection in. NextJs
+
+# Setup MongoDB Connection (with cache)
+* Import mongoose
+```fs
+  import mongoose from "mongoose";
+```
+* Read MongoDB URL from environment
+```fs
+ const MONGODB_URI = process.env.MONGODB_URI;
+```
+* Safety check
+```fs
+if (!MONGODB_URI) {
+  throw new Error("Please define MONGODB_URI in .env.local");
+}
+```
+* Create a global cache variable
+```fs
+ let cached = global.mongoose;
+```
+ This checks if a MongoDB connection is already stored in memory (global object).
+
+* 👉 In Next.js (especially in development), files reload often.
+* Without caching, it would create new DB connections again and again (bad ❌).
+
+* If no cache exists, create one
+```fs
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+```
+You create an object with:
+* conn → actual DB connection
+  * promise → connection process (while connecting)
+Stored globally so it survives hot reloads.
+
+* Main function: dbConnect()
+
+```fs 
+async function dbConnect() {} 
+```
+* This function connects to MongoDB and returns the connection.
+
+* If already connected → reuse it
+```fs
+if (cached.conn) {
+  return cached.conn;
+}
+```
+
+* If a connection already exists:
+✅ don’t reconnect
+✅ just return the existing one
+⚡ improves performance
+⚡ avoids “too many connections” error
+
+* If not connected, create connection promise
+```fs
+if (!cached.promise) {
+  cached.promise = mongoose.connect(MONGODB_URI, {
+    bufferCommands: false,
+  });
+}
+
+```
+*  This starts connecting to MongoDB:
+mongoose.connect() returns a promise
+* stored in cached.promise so multiple requests don’t create multiple connections
+* bufferCommands: false
+➡ prevents mongoose from storing commands when DB is not connected
+
+* Wait for connection and store it
+```fs
+cached.conn = await cached.promise;
+return cached.conn;
+
+```
+* Waits until MongoDB connects, then:
+   * saves connection in cached.conn
+   * returns it
+ So next time:
+➡ it will skip connecting and reuse it
+
+* Export function
+```fs
+export default dbConnect;
+
+```
+* So you can use it anywhere:
+```fs
+await dbConnect();
+```
+In API routes, server actions, etc.
+
+🧠 In simple words:
+
+* This file:
+✅ connects MongoDB
+✅ prevents multiple connections
+✅ works correctly with Next.js hot reload
+✅ improves performance
+✅ avoids crashes
+
+# Designing Models in NextJS
+
+
