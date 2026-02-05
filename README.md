@@ -155,3 +155,22 @@ In API routes, server actions, etc.
 # Designing Models in NextJS
 
 
+# 👤 USER MODEL EXPLANATION
+```fs
+import bcrypt from "bcryptjs";
+```
+Used to hash passwords before saving.
+
+# 🔐 Password hashing middleware
+```fs
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+});
+```
+* Before saving user:
+* Checks if password was changed
+* Hashes password using bcrypt
+* Stores hashed password instead of plain text
+* So DB never stores real password ✅
