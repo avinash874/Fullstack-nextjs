@@ -174,3 +174,95 @@ userSchema.pre("save", async function (next) {
 * Hashes password using bcrypt
 * Stores hashed password instead of plain text
 * So DB never stores real password ✅
+
+# NextAuth in NextJS 
+* 1️⃣ What is NextAuth (Auth.js)?
+
+NextAuth.js is an authentication library for Next.js that handles:
+
+* Login / Logout
+* Sessions (JWT / DB)
+* OAuth (Google, GitHub, etc.)
+* Credentials (email/password)
+* Middleware protection
+
+👉 You don’t write auth logic again and again.
+
+# 2️⃣ Install Required Packages
+```fs
+npm install next-auth
+npm install bcryptjs
+```
+If using MongoDB:
+```fs
+npm install mongoose
+```
+
+# 3️⃣ next-auth.d.ts (TypeScript Fix)
+
+* Without this → TS error:
+* ❌ Property 'id' does not exist on type User
+
+```fs
+import { DefaultSession } from "next-auth";
+
+declare module "next-auth" {
+    interface Session {
+        user: {
+            id: String;
+        } & DefaultSession["user"];
+    }
+}
+```
+# 🔥 What is NextAuthOptions 
+NextAuthOptions is a configuration object that tells NextAuth
+
+* how users authenticate
+* how sessions are created
+* what data goes into JWT
+* how redirects & security behave
+
+Everything NextAuth does flows through this object.
+
+# 🧠 High-Level Architecture
+```fs
+User
+ ↓
+Provider (Google / Credentials / GitHub)
+ ↓
+authorize()  ← YOU CONTROL THIS
+ ↓
+JWT callback  ← TOKEN CREATED / UPDATED
+ ↓
+Session callback ← DATA EXPOSED TO CLIENT
+ ↓
+Middleware / useSession()
+```
+```fs
+https://vscode.dev/github/avinash874/Fullstack-nextjs/blob/main/public/Screenshot%202026-02-09%20at%203.42.08%E2%80%AFPM.png
+```
+
+* by default callback session per kam karta hai aur uske liye strategy lagta hai
+* Aur 
+
+```fs
+// callbacks and other options can be added here
+    callbacks:{
+        async jwt({token, user}){
+            if(user){
+                token.id = user.id
+            }
+            return token
+        },
+        async session({session, token}){
+
+            if(session.user){
+                session.user.id = token.id as string
+            }
+            return session
+        }
+    },
+    session: {
+        strategy: "jwt"
+    }
+    ```
