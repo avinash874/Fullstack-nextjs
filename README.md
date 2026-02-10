@@ -241,6 +241,16 @@ Middleware / useSession()
 ```fs
 https://vscode.dev/github/avinash874/Fullstack-nextjs/blob/main/public/Screenshot%202026-02-09%20at%203.42.08%E2%80%AFPM.png
 ```
+```fs
+NextAuth 
+     - with TS
+         - next-auth.d.ts
+         - NextAuthOptions       => 1.Provider[]- CredentialProvider(credentials,authorize), 2.callbacks(JWT, session), 3.pages, 4.session(strategy,maxAge,secret)
+         - [...nextAuth]
+         - register
+         - middleware(withAuth)
+
+```
 
 * by default callback session per kam karta hai aur uske liye strategy lagta hai
 * Aur 
