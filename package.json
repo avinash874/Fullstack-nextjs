@@ -9,7 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@imagekit/next": "^2.1.4",
     "bcryptjs": "^3.0.3",
+    "imagekit": "^6.0.0",
+    "lucide": "^0.563.0",
+    "lucide-react": "^0.563.0",
     "mongoose": "^9.1.5",
     "next": "16.1.6",
     "next-auth": "^4.24.13",

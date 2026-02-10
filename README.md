@@ -243,14 +243,55 @@ https://vscode.dev/github/avinash874/Fullstack-nextjs/blob/main/public/Screensho
 ```
 ```fs
 NextAuth 
-     - with TS
-         - next-auth.d.ts
-         - NextAuthOptions       => 1.Provider[]- CredentialProvider(credentials,authorize), 2.callbacks(JWT, session), 3.pages, 4.session(strategy,maxAge,secret)
-         - [...nextAuth]
-         - register
-         - middleware(withAuth)
+     └── with TS
+         ├── next-auth.d.ts
+         ├── NextAuthOptions       => 1.Provider[]- CredentialProvider(credentials,authorize), 2.callbacks(JWT, session), 3.pages, 4.session(strategy,maxAge,secret)
+         ├── [...nextAuth]
+         ├── register
+         ├── middleware(withAuth)
 
 ```
+# 🔐 providers[]
+* Credentials Provider (highlighted in image)
+
+* Theory
+This is where authentication logic lives.
+OAuth → provider validates
+Credentials → YOU validate
+```fs
+providers[]
+ └── CredentialsProvider
+     ├── credentials
+     └── authorize
+```
+* What authorize() really is
+* authorize() = “Can this user prove they are who they claim to be?”
+
+```fs
+authorize: async (credentials) => {
+  const user = await User.findOne({ email: credentials.email });
+  if (!user) return null;
+  const isValid = await bcrypt.compare(
+    credentials.password,
+    user.password
+  );
+  if (!isValid) return null;
+  return {
+    id: user._id.toString(),
+    email: user.email,
+  };
+}
+
+```
+
+# 🔁 callbacks
+```fs
+callbacks
+ ├── jwt
+ └── session
+
+```
+# 🟢 session callback
 
 * by default callback session per kam karta hai aur uske liye strategy lagta hai
 * Aur 
@@ -275,4 +316,66 @@ NextAuth
     session: {
         strategy: "jwt"
     }
-    ```
+ 
+   ```
+# 🟡 jwt callback
+* Theory
+
+Runs:
+once on login
+then on every request
+
+Used to:
+   * attach user id
+   * attach role
+   * refresh token
+* Server-side only
+
+```fs
+jwt: async ({ token, user }) => {
+  if (user) {
+    token.id = user.id;
+  }
+  return token;
+}
+
+```
+
+# 🟢 session callback
+* Theory
+Controls what frontend sees.
+   ```fs
+   session: async ({ session, token }) => {
+  session.user.id = token.id as string;
+  return session;
+}
+
+   ```
+# 📄 pages
+
+* Theory
+Override NextAuth default UI.
+Diagram keeps it simple → correct.
+```fs
+pages: {
+  signIn: "/login",
+}
+```
+
+ # 🔑 secret
+Diagram shows secret at bottom — that’s intentional.
+
+* Theory
+This is the cryptographic backbone.
+
+Used to:
+* sign JWT
+* encrypt cookies
+* prevent tampering
+
+```fs
+secret: process.env.NEXTAUTH_SECRET;
+```
+
+# 🚀 Ultimate File Handling Guide in Next.js with ImageKit
+
