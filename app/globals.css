@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@plugin "daisyui" {
+   themes: light --default, dark --prefersdark;
+ }
+
+/* DaisyUI theme configuration should be placed in tailwind.config.js, not in CSS */
 
 :root {
   --background: #ffffff;

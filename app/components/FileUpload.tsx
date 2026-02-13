@@ -1,8 +1,7 @@
 "use client";
 
-import { IKUpload } from "@imagekit/next";
+import { IKUpload } from "imagekitio-next";
 import { IKUploadResponse } from "imagekitio-next/dist/types/components/IKUpload/props";
-// import { UploadResponse } from "imagekit";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -35,14 +34,14 @@ export default function FileUpload({
     setUploading(true);
     setError(null);
   };
-// Progress handler for upload progress 
+
   const handleProgress = (evt: ProgressEvent) => {
     if (evt.lengthComputable && onProgress) {
       const percentComplete = (evt.loaded / evt.total) * 100;
       onProgress(Math.round(percentComplete));
     }
   };
-   // Custom file validation before upload
+
   const validateFile = (file: File) => {
     if (fileType === "video") {
       if (!file.type.startsWith("video/")) {
@@ -81,7 +80,6 @@ export default function FileUpload({
         useUniqueFileName={true}
         folder={fileType === "video" ? "/videos" : "/images"}
       />
-      // Show uploading state with a spinner
 
       {uploading && (
         <div className="flex items-center gap-2 text-sm text-primary">

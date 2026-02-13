@@ -1,7 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
-import { ImageKitProvider } from "@imagekit/next";
+import { ImageKitProvider } from "imagekitio-next";
 import { NotificationProvider } from "./Notification";
 
 const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT!;
